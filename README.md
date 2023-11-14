@@ -1,2 +1,2 @@
 # projeto-login
-<p>@author Lívia Mendes</p><br>Projeto de sistema simples de cadastro e login em java em desenvolvimento</br>
+<p>@author Lívia Mendes</p><p>Projeto de sistema simples de cadastro e login em java em desenvolvimento</p>
