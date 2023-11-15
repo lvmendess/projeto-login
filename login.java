@@ -3,12 +3,17 @@
  * @author Lívia Mendes
  * @version 14.11.2023
  */
+
+import java.util.ArrayList;
+
 public class login {
 
     private String usuario;
     private int senha;
-    private String[] banco_usuarios = new String[50];
-    private int[] banco_senhas = new int[50];
+    /*private String[] banco_usuarios = new String[50];
+    private int[] banco_senhas = new int[50];*/
+    private ArrayList<String> arrUsuarios = new ArrayList<String>();
+    private ArrayList<Integer> arrSenhas = new ArrayList<Integer>();
 
     public login(){ /*construtor */
 
@@ -24,14 +29,16 @@ public class login {
                     valido = false;
                 }
             if (valido) {
-                for (int i = 0; i < banco_usuarios.length; i++) {
+                /*for (int i = 0; i < banco_usuarios.length; i++) {
                     if (banco_usuarios[i] == null) {
                         banco_usuarios[i] = usuario; //guarda o usuario e sua senha no mesmo index de arrays diferentes
                         banco_senhas[i] = senha;
 
                         retorno = "Usuário cadastrado com sucesso";
                     }
-                }
+                }*/
+                arrUsuarios.add(usuario);
+                arrSenhas.add(senha);
             } else {
                 retorno = "Nome de usuário indisponível.";
             }
@@ -41,8 +48,13 @@ public class login {
     
     public int getDisponibilidade() { //verifica número de espaços disponíveis no banco
         int disponibilidade = 0;
-        for (int i = 0; i < banco_usuarios.length; i++) {
+        /*for (int i = 0; i < banco_usuarios.length; i++) {
             if (banco_usuarios[i] == null) {
+                disponibilidade++;
+            }
+        }*/
+        for(String user : arrUsuarios){
+             if (user == null) {
                 disponibilidade++;
             }
         }
@@ -51,7 +63,7 @@ public class login {
 
     public boolean isUsuario(String username) { //verifica se um nome de usuário está cadastrado no sistema
         boolean existe = false;
-        for (String name : banco_usuarios) {
+        for (String name : arrUsuarios) {
             if (name.equals(username)) {
                 existe = true;
             }
@@ -66,12 +78,15 @@ public class login {
         String retorno = "";
 
         if (isUsuario(username)) {
-            for (int i = 0; i < banco_usuarios.length; i++) {
+            /*for (int i = 0; i < banco_usuarios.length; i++) {
                 for (int j = 0; j < banco_senhas.length; j++) {
                     if (banco_usuarios[i].equals(username) && banco_senhas[j] == senha) {
                         match = true;
                     }
                 }
+            }*/
+            if(arrUsuarios.indexOf(username)==arrSenhas.indexOf(senha)){
+                match = true;
             }
             if (match) {
                 retorno = "Usuário conectado";
