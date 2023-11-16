@@ -1,43 +1,29 @@
 /*
  * #projeto de sistema simples de login em java
  * @author Lívia Mendes
- * @version 15.11.2023
+ * @version 16.11.2023
  */
 
 import java.util.*;
 
 public class login {
     private Scanner entrada = new Scanner(System.in);
-    private String usuario;
-    private int senha;
-    private String endEmail;
-    /*
-     * private ArrayList<String> arrUsuarios = new ArrayList<String>();
-     * private ArrayList<Integer> arrSenhas = new ArrayList<Integer>();
-     * private ArrayList<String> arrEmails = new ArrayList<String>();
-     */
+
     private ArrayList<User> arrUsers = new ArrayList<User>();
+    private boolean usuarioConectado;
 
     public login() { /* construtor */
 
     }
 
     public String cadastrar(String username, int password, String email) {
-        usuario = username;
-        senha = password;
-        endEmail = email;
         boolean valido = true;
         String retorno = "";
         if (isUsuario(username) || isUsuarioEmail(email)) { // checa se o nome de usuário está disponível para cadastro
             valido = false;
         }
         if (valido) {
-            User user = new User(username, password, endEmail);
-            /*
-             * arrUsuarios.add(user.getUsuario());
-             * arrEmails.add(user.getEmail());
-             * arrSenhas.add(user.getSenha());
-             */
+            User user = new User(username, password, email);
             arrUsers.add(user);
             retorno = "Usuário cadastrado com sucesso.";
         } else {
@@ -45,19 +31,6 @@ public class login {
         }
         return retorno;
     }
-
-    /*
-     * public int getDisponibilidade() { //verifica número de espaços disponíveis no
-     * banco
-     * int disponibilidade = 0;
-     * for(User user : arrUsers){
-     * if (user == null) {
-     * disponibilidade++;
-     * }
-     * }
-     * return disponibilidade;
-     * }
-     */
 
     public boolean isUsuario(String username) { // verifica se um nome de usuário está cadastrado no sistema
         boolean existe = false;
@@ -81,19 +54,40 @@ public class login {
 
     public String conectarUsuario(String username, int password) { // conecta o usuário ao sistema por meio do nome de
                                                                    // usuário
-        usuario = username;
-        senha = password;
         boolean match = false;
         String retorno = "";
 
         if (isUsuario(username)) {
             for (User user : arrUsers) {
-                if (user.getUsuario().equals(username) && user.getSenha() == senha) {
+                if (user.getUsuario().equals(username) && user.getSenha() == password) {
                     match = true;
                 }
             }
             if (match) {
                 retorno = "Usuário conectado";
+                usuarioConectado = true;
+            } else {
+                retorno = "Senha incorreta";
+            }
+        } else {
+            retorno = "Usuário não encontrado";
+        }
+        return retorno;
+    }
+
+    public String conectarEmail(String email, int password) { //conecta usuário ao sistema por meio do email
+        boolean match = false;
+        String retorno = "";
+
+        if (isUsuarioEmail(email)) {
+            for (User user : arrUsers) {
+                if (user.getEmail().equals(email) && user.getSenha() == password) {
+                    match = true;
+                }
+            }
+            if (match) {
+                retorno = "Usuário conectado";
+                usuarioConectado = true;
             } else {
                 retorno = "Senha incorreta";
             }
@@ -101,86 +95,110 @@ public class login {
             retorno = "Usuário não encontrado";
         }
 
-        /*
-         * if (isUsuario(username)) {
-         * if (user.getUsuario()==username) {
-         * match = true;
-         * }
-         * if (match) {
-         * retorno = "Usuário conectado";
-         * } else {
-         * retorno = "Senha incorreta";
-         * }
-         * } else {
-         * retorno = "Usuário não encontrado";
-         * }
-         */
-
         return retorno;
     }
 
-    public String conectarEmail(String email, int password) { // conecta usuário ao sistema por meio do email
-        endEmail = email;
-        senha = password;
-        boolean match = false;
-        String retorno = "";
-
-        if (isUsuarioEmail(endEmail)) {
-            for (User user : arrUsers) {
-                if (user.getEmail().equals(endEmail) && user.getSenha() == senha) {
-                    match = true;
-                }
-            }
-            if (match) {
-                retorno = "Usuário conectado";
-            } else {
-                retorno = "Senha incorreta";
-            }
-        } else {
-            retorno = "Usuário não encontrado";
-        }
-
-        /*
-         * if (isUsuarioEmail(endEmail)) {
-         * if (arrUsuarios.indexOf(endEmail) == arrSenhas.indexOf(senha)) {
-         * match = true;
-         * }
-         * if (match) {
-         * retorno = "Usuário conectado";
-         * } else {
-         * retorno = "Senha incorreta";
-         * }
-         * } else {
-         * retorno = "Usuário não encontrado";
-         * }
-         */
-
-        return retorno;
-    }
-
-    public void deletarUsuario(String username) { // deleta um usuário do sistema
-        if (isUsuario(username)) {
-            System.out.println("digite sua senha:"); // verificação de senha
-            int senhaAux = entrada.nextInt();
-            for (User user : arrUsers) {
-                if (user.getUsuario().equals(username) && user.getSenha() == senhaAux) {
-                    System.out.println(
-                            "tem certeza de que deseja deletar esta conta? Digite Sim para confirmar ou Não para cancelar");
-                    String resposta = entrada.nextLine();
-                    if (resposta.equals("sim") || resposta.equals("Sim") || resposta.equals("SIM")) {
-                        arrUsers.remove(user);
-                    } else {
-                        break;
+    public void deletarUsuario(User usuario) { // deleta um usuário do sistema
+        if (isUsuario(usuario.getUsuario())) {
+            if (usuarioConectado) {
+                System.out.println("digite sua senha:"); // verificação de senha
+                int senhaAux = entrada.nextInt();
+                for (User user : arrUsers) {
+                    if (user.getUsuario().equals(usuario.getUsuario()) && user.getSenha() == senhaAux) {
+                        System.out.println(
+                                "tem certeza de que deseja deletar esta conta? Digite Sim para confirmar ou Não para cancelar");
+                        String resposta = entrada.nextLine();
+                        if (resposta.equals("sim") || resposta.equals("Sim") || resposta.equals("SIM")) {
+                            arrUsers.remove(user);
+                        } else {
+                            break;
+                        }
                     }
                 }
+            } else {
+                System.out.println("usuário deve estar conectado para poder executar essa ação");
             }
+        } else {
+            System.out.println("usuário não encontrado");
         }
     }
 
-    public void alterarSenha() { // altera a senha de um usuário
+    public void alterarUsuario(String usuario) { // altera o username de um usuário
+        boolean existe = true;
+        String newUser = "";
+        if (isUsuario(usuario)) {
+            //int ind = arrUsers.indexOf(usuario);
+            if (usuarioConectado) {
+                while (existe == true) { //verifica se o novo nome de usuário já existe
+                    System.out.println("digite o novo nome de usuário: ");
+                    newUser = entrada.nextLine();
+                    if (isUsuario(newUser)) {
+                        System.out.println("nome de usuário indisponível");
+                    } else {
+                        existe = false;
+                    }
+                }
+                System.out.println("digite sua senha:"); // verificação de senha
+                int senhaAux = entrada.nextInt();
+                entrada.nextLine();
+                for (User user : arrUsers) {
+                    if (user.getUsuario().equals(usuario) && user.getSenha() == senhaAux) {
+                        System.out.println(
+                                "tem certeza de que deseja alterar sua senha? Digite Sim para confirmar ou Não para cancelar");
+                        String resposta = entrada.nextLine();
+                        if (resposta.equals("sim") || resposta.equals("Sim") || resposta.equals("SIM")) {
+                            user.setUsuario(newUser);
+                            System.out.println("usuário alterado com sucesso");
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                System.out.println("usuário deve estar conectado para poder executar essa ação");
+            }
+        } else {
+            System.out.println("usuário não encontrado");
+        }
     }
 
-    public void alterarUsuario() { // altera o nome de usuário
+    public void alterarSenha(String usuario) { // altera a senha de um usuário
+        int newPassword = 0;
+        boolean check = false;
+        if (isUsuario(usuario)) {
+            if (usuarioConectado) {
+                System.out.println("digite sua senha:"); // verificação de senha
+                int senhaAux = entrada.nextInt();
+                entrada.nextLine();
+                for (User user : arrUsers) {
+                    if (user.getUsuario().equals(usuario) && user.getSenha() == senhaAux) {
+                        System.out.println(
+                                "tem certeza de que deseja alterar sua senha? Digite Sim para confirmar ou Não para cancelar");
+                        String resposta = entrada.nextLine();
+                        if (resposta.equals("sim") || resposta.equals("Sim") || resposta.equals("SIM")) {
+                            System.out.println("digite sua nova senha: ");
+                            newPassword = entrada.nextInt();
+                            while (check == false) {
+                                System.out.println("repita a senha: ");
+                                int newPasswordAux = entrada.nextInt();
+                                if (newPassword == newPasswordAux) {
+                                    check = true;
+                                    user.setSenha(newPassword);
+                                    System.out.println("usuário alterado com sucesso");
+                                } else {
+                                    System.out.println("as senhas não coincidem. tente novamente");
+                                }
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            } else {
+                System.out.println("usuário deve estar conectado para poder executar essa ação");
+            }
+        } else {
+            System.out.println("usuário não encontrado");
+        }
     }
-
 }

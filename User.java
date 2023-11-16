@@ -21,7 +21,7 @@ public class User {
         return usuarioSenha;
     }
 
-    public void setUsuaurio(String usuario) {
+    public void setUsuario(String usuario) {
         nomeDeUsuario = usuario;
     }
 
